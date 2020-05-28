@@ -23,7 +23,19 @@ function Layout(props: IProps) {
                     <div className="wh-toolbar">
 
                         <FilterPanel onOpen={onOpenFilterPanel} onClose={oncloseFilterPanel} >
-                            <div>Some content</div>
+                            <div className="fb-row">
+                                <div className="fb-label">Tenant</div>
+                                <select name="" id="" className="fb-filter">
+                                    <option value="">Select a tenant</option>
+                                </select>
+                            </div>
+
+                            <div className="fb-row">
+                                <div className="fb-label">Location</div>
+                                <select name="" id="" className="fb-filter">
+                                    <option value="">Select a Location</option>
+                                </select>
+                            </div>
                         </FilterPanel>
 
                     </div>

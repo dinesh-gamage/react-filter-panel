@@ -58,3 +58,25 @@
         text-align: justify;
     }
 }
+
+.fb-row {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+    margin: 6px auto;
+
+    .fb-label {
+        width: 100%;
+        padding: 10px 0;
+    }
+
+    .fb-filter {
+        width: 100%;
+        padding: 8px;
+        border-radius: 8px;
+        outline: none;
+    }
+}
