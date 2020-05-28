@@ -97,7 +97,7 @@
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, ".filter-panel {\n  position: absolute;\n  background-color: white;\n  box-sizing: border-box;\n  width: auto;\n  min-width: 200px;\n  height: auto;\n  border-radius: 15px;\n  overflow: hidden;\n  box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.12); }\n  .filter-panel * {\n    box-sizing: border-box; }\n  .filter-panel .filter-header {\n    padding: 15px;\n    display: flex;\n    align-items: center;\n    justify-content: space-between;\n    border-bottom: 1px solid lightgray; }\n    .filter-panel .filter-header .burger-menu-btn {\n      width: 30px;\n      height: 30px;\n      border-radius: 6px;\n      background-color: purple;\n      background-image: url(\"/assets/images/burger-menu.png\");\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 50%;\n      cursor: pointer;\n      animation: animate 1s linear;\n      animation-fill-mode: forwards; }\n\n@keyframes animate {\n  from {\n    transform: rotate(0deg); }\n  to {\n    transform: rotate(-25deg); } }\n  .filter-panel .filter-body {\n    width: 100%;\n    padding: 8px 10px; }\n    .filter-panel .filter-body .fb-row {\n      display: flex;\n      flex-direction: column;\n      width: 100%;\n      height: auto;\n      align-items: center;\n      justify-content: center;\n      margin: 6px auto; }\n      .filter-panel .filter-body .fb-row .fb-label {\n        width: 100%;\n        padding: 10px 0; }\n      .filter-panel .filter-body .fb-row .fb-filter {\n        width: 100%;\n        padding: 8px;\n        border-radius: 8px;\n        outline: none; }\n", ""]);
+exports.push([module.i, ".filter-panel-btn {\n  position: relative; }\n  .filter-panel-btn.fpb-burger-menu {\n    width: 30px;\n    height: 30px;\n    border-radius: 6px;\n    background-color: #ecebeb;\n    background-image: url(\"/assets/images/burger-menu.png\");\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 50%;\n    cursor: pointer; }\n\n.filter-panel {\n  position: absolute;\n  background-color: white;\n  box-sizing: border-box;\n  width: auto;\n  min-width: 200px;\n  height: auto;\n  border-radius: 15px;\n  overflow: hidden;\n  box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.12); }\n  .filter-panel * {\n    box-sizing: border-box; }\n  .filter-panel .filter-header {\n    padding: 15px;\n    display: flex;\n    align-items: center;\n    justify-content: space-between;\n    border-bottom: 1px solid lightgray; }\n    .filter-panel .filter-header .burger-menu-btn {\n      width: 30px;\n      height: 30px;\n      border-radius: 6px;\n      background-color: purple;\n      background-image: url(\"/assets/images/burger-menu.png\");\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 50%;\n      cursor: pointer;\n      animation: animate 0.2s linear;\n      animation-fill-mode: forwards; }\n\n@keyframes animate {\n  from {\n    transform: rotate(0deg); }\n  to {\n    transform: rotate(-25deg); } }\n  .filter-panel .filter-body {\n    width: 100%;\n    padding: 15px 10px; }\n", ""]);
 // Exports
 module.exports = exports;
 
@@ -567,29 +567,70 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = __webpack_require__(/*! react */ "react");
 const ReactDom = __webpack_require__(/*! react-dom */ "react-dom");
 __webpack_require__(/*! ./FilterPanel.scss */ "./src/components/FilterPanel/FilterPanel.scss");
-const FilterPanel = (props) => {
+function FilterPanel(props) {
+    // states
+    let [shopPanel, setShopPanel] = React.useState(false);
+    let [coords, setCoords] = React.useState({});
+    // get root element
+    let rootElement = document.getElementById("filter-portal");
+    if (rootElement == null) {
+        rootElement = document.createElement("div");
+        rootElement.setAttribute('id', "filter-portal");
+        document.body.appendChild(rootElement);
+    }
+    // wrapper
     const el = document.createElement("div");
     React.useEffect(() => {
-        props.rootElement.appendChild(el);
-        return () => props.rootElement.removeChild(el);
-    }, [props.rootElement, el]);
-    return ReactDom.createPortal(React.createElement(React.Fragment, null,
-        React.createElement("div", { className: "filter-panel", style: props.coords },
-            React.createElement("div", { className: "filter-header" },
-                React.createElement("div", { className: "fh-title" },
-                    React.createElement("div", { className: "fht-icon" }),
-                    React.createElement("div", { className: "fht-text" }, "Filters")),
-                React.createElement("div", { className: "burger-menu-btn", onClick: props.onClose })),
-            React.createElement("div", { className: "filter-body" },
-                React.createElement("div", { className: "fb-row" },
-                    React.createElement("div", { className: "fb-label" }, "Tenant"),
-                    React.createElement("select", { name: "", id: "", className: "fb-filter" },
-                        React.createElement("option", { value: "" }, "Select a tenant"))),
-                React.createElement("div", { className: "fb-row" },
-                    React.createElement("div", { className: "fb-label" }, "Location"),
-                    React.createElement("select", { name: "", id: "", className: "fb-filter" },
-                        React.createElement("option", { value: "" }, "Select a Location")))))), props.rootElement);
-};
+        rootElement.appendChild(el);
+        return () => rootElement.removeChild(el);
+    }, [rootElement, el]);
+    // update coordinates of filter panel
+    const updateTooltipCoords = (button) => {
+        const buttonDetails = button.getBoundingClientRect();
+        let rootWidth = rootElement.clientWidth;
+        let _coords = {
+            top: buttonDetails.y + window.scrollY - 15,
+            right: rootWidth - buttonDetails.right - 15
+        };
+        setCoords(_coords);
+    };
+    // callbacks
+    const onOpenPanel = () => {
+        setShopPanel(true);
+        if (typeof props.onOpen == "function") {
+            props.onOpen();
+        }
+    };
+    const onClosePanel = () => {
+        setShopPanel(false);
+        if (typeof props.onClose == "function") {
+            props.onClose();
+        }
+    };
+    // render filter panel
+    const renderPanelContent = () => {
+        return (React.createElement(React.Fragment, null,
+            React.createElement("div", { className: "filter-panel", style: coords },
+                React.createElement("div", { className: "filter-header" },
+                    React.createElement("div", { className: "fh-title" },
+                        React.createElement("div", { className: "fht-icon" }),
+                        React.createElement("div", { className: "fht-text" }, "Filters")),
+                    React.createElement("div", { className: "burger-menu-btn", onClick: onClosePanel })),
+                React.createElement("div", { className: "filter-body" }, props.children))));
+    };
+    const renderFilterPanel = () => {
+        return ReactDom.createPortal(renderPanelContent(), rootElement);
+    };
+    return (React.createElement(React.Fragment, null,
+        React.createElement("div", { className: "filter-panel-btn fpb-burger-menu", onClick: (e) => {
+                updateTooltipCoords(e.target);
+                onOpenPanel();
+            } }),
+        shopPanel ?
+            renderFilterPanel()
+            :
+                null));
+}
 exports.default = FilterPanel;
 
 
@@ -638,24 +679,11 @@ const React = __webpack_require__(/*! react */ "react");
 __webpack_require__(/*! ./Layout.scss */ "./src/components/Layout/Layout.scss");
 const FilterPanel_1 = __webpack_require__(/*! ../FilterPanel/FilterPanel */ "./src/components/FilterPanel/FilterPanel.tsx");
 function Layout(props) {
-    let rootElement = document.getElementById("portal-root");
-    let [showModal, setShowModal] = React.useState(false);
-    let [coords, setCoords] = React.useState({});
-    const closeModal = () => {
-        setShowModal(false);
+    const onOpenFilterPanel = () => {
+        console.log("Opening filter panel");
     };
-    const updateTooltipCoords = (button) => {
-        const rect = button.getBoundingClientRect();
-        let rootWidth = rootElement.clientWidth;
-        console.log(rootWidth);
-        console.log(rect);
-        let _coords = {
-            //left: rect.x + rect.width / 2, // add half the width of the button for centering
-            top: rect.y + window.scrollY - 15,
-            right: rootWidth - rect.right - 15
-        };
-        console.log(_coords);
-        setCoords(_coords);
+    const oncloseFilterPanel = () => {
+        console.log("Closing filter panel");
     };
     return (React.createElement(React.Fragment, null,
         React.createElement("div", { className: "container" },
@@ -663,14 +691,8 @@ function Layout(props) {
                 React.createElement("div", { className: "widget-header" },
                     React.createElement("div", { className: "wh-title" }, "Sample Widget"),
                     React.createElement("div", { className: "wh-toolbar" },
-                        React.createElement("div", { className: "burger-menu", onClick: (e) => {
-                                updateTooltipCoords(e.target);
-                                setShowModal(true);
-                            } }),
-                        showModal ?
-                            React.createElement(FilterPanel_1.default, { coords: coords, rootElement: rootElement, onClose: () => setShowModal(false) })
-                            :
-                                "")),
+                        React.createElement(FilterPanel_1.default, { onOpen: onOpenFilterPanel, onClose: oncloseFilterPanel },
+                            React.createElement("div", null, "Some content")))),
                 React.createElement("div", { className: "widget-body" },
                     React.createElement("h1", null, "Widget Content"),
                     React.createElement("p", null, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo ducimus, ullam repellat quidem consectetur a cupiditate obcaecati incidunt ipsum voluptatem veniam voluptatibus sint, sed saepe, ipsam dicta numquam distinctio doloribus. Quae, tempora? Officiis laborum natus molestias qui nesciunt mollitia, accusantium obcaecati repellat amet suscipit inventore cum vel, debitis accusamus odit repellendus adipisci, assumenda est culpa optio. Sunt quisquam porro odit. Ipsa, eum praesentium ea sed a magni dolorum vel natus ratione asperiores voluptatem saepe aliquam, dolorem expedita sit minima. Ad distinctio repellat ut minima dolores maiores in omnis vitae eum. Perspiciatis reiciendis hic, alias quibusdam autem dolore magni vel provident fuga eum tempora! Ipsum mollitia illo soluta praesentium optio perspiciatis velit dolor voluptatem, accusantium quas. Voluptatum, tempore voluptates? Possimus, dolores. Dolor, obcaecati. Rerum tempora quisquam perspiciatis? Deserunt vero asperiores eum? Eligendi perspiciatis, ducimus neque impedit repellat beatae libero amet recusandae pariatur hic dolore nostrum consequatur ipsum aperiam minima et maiores!"))))));

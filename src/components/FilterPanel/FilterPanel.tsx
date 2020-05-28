@@ -3,6 +3,12 @@ import * as ReactDom from 'react-dom';
 
 import './FilterPanel.scss';
 
+
+interface IProps {
+    onOpen?: any,
+    onClose?: any
+}
+
 interface ICoords {
     top?: number,
     bottom?: number,
@@ -11,55 +17,111 @@ interface ICoords {
 
 }
 
-interface IProps {
-    rootElement: HTMLElement,
-    coords: ICoords,
-    onClose: any
-}
+function FilterPanel(props: React.PropsWithChildren<IProps>) {
 
-const FilterPanel = (props: React.PropsWithChildren<IProps>) => {
+    // states
+    let [shopPanel, setShopPanel] = React.useState(false);
+    let [coords, setCoords] = React.useState({});
+
+
+    // get root element
+    let rootElement = document.getElementById("filter-portal");
+    if (rootElement == null) {
+        rootElement = document.createElement("div");
+        rootElement.setAttribute('id', "filter-portal");
+        document.body.appendChild(rootElement);
+    }
+
+
+    // wrapper
     const el = document.createElement("div");
 
     React.useEffect(() => {
 
-        props.rootElement.appendChild(el);
-        return () => props.rootElement.removeChild(el);
+        rootElement.appendChild(el);
+        return () => rootElement.removeChild(el);
 
-    }, [props.rootElement, el])
+    },
+        [rootElement, el]
+    )
+
+    // update coordinates of filter panel
+    const updateTooltipCoords = (button: HTMLButtonElement) => {
+        const buttonDetails = button.getBoundingClientRect();
+        let rootWidth = rootElement.clientWidth;
+
+        let _coords: ICoords = {
+            top: buttonDetails.y + window.scrollY - 15,
+            right: rootWidth - buttonDetails.right - 15
+        }
+
+        setCoords(_coords);
+    };
+
+    // callbacks
+    const onOpenPanel = () => {
+        setShopPanel(true);
+
+        if (typeof props.onOpen == "function") {
+            props.onOpen();
+        }
+    }
+
+    const onClosePanel = () => {
+        setShopPanel(false);
+
+        if (typeof props.onClose == "function") {
+            props.onClose();
+        }
+    }
 
 
-    return ReactDom.createPortal(<>
-        <div className="filter-panel" style={props.coords}>
-            <div className="filter-header">
-                
-                <div className="fh-title">
-                    <div className="fht-icon"></div>
-                    <div className="fht-text">Filters</div>
+    // render filter panel
+    const renderPanelContent = () => {
+        return (<>
+            <div className="filter-panel" style={coords}>
+                <div className="filter-header">
+
+                    <div className="fh-title">
+                        <div className="fht-icon"></div>
+                        <div className="fht-text">Filters</div>
+                    </div>
+
+                    <div className="burger-menu-btn" onClick={onClosePanel}></div>
+
                 </div>
 
-                <div className="burger-menu-btn" onClick={props.onClose}></div>
+                <div className="filter-body">
+
+                    {props.children}
+                </div>
 
             </div>
+        </>);
+    }
 
-        <div className="filter-body">
-            <div className="fb-row">
-                <div className="fb-label">Tenant</div>
-                <select name="" id="" className="fb-filter">
-                    <option value="">Select a tenant</option>
-                </select>
-            </div>
+    const renderFilterPanel = () => {
+        return ReactDom.createPortal(
+            renderPanelContent(),
+            rootElement
+        );
+    }
 
-            <div className="fb-row">
-                <div className="fb-label">Location</div>
-                <select name="" id="" className="fb-filter">
-                    <option value="">Select a Location</option>
-                </select>
-            </div>
+    return (<>
+        <div className="filter-panel-btn fpb-burger-menu"
+            onClick={(e) => {
+                updateTooltipCoords(e.target as HTMLButtonElement);
+                onOpenPanel()
+            }}
+        >
         </div>
-
-        </div>
-    </>, props.rootElement);
-
+        {
+            shopPanel ?
+                renderFilterPanel()
+                :
+                null
+        }
+    </>)
 }
 
 export default FilterPanel;

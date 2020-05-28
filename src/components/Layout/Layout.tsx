@@ -6,31 +6,13 @@ interface IProps { }
 
 function Layout(props: IProps) {
 
-    let rootElement = document.getElementById("portal-root");
-    let [showModal, setShowModal] = React.useState(false);
-    let [coords, setCoords] = React.useState({});
-
-    const closeModal = () => {
-        setShowModal(false);
+    const onOpenFilterPanel = () => {
+        console.log("Opening filter panel");
     }
 
-    const updateTooltipCoords = (button: HTMLButtonElement) => {
-        const rect = button.getBoundingClientRect();
-        let rootWidth = rootElement.clientWidth;
-        console.log(rootWidth);
-        console.log(rect);
-        let _coords: any = {
-            //left: rect.x + rect.width / 2, // add half the width of the button for centering
-            top: rect.y + window.scrollY - 15, // add scrollY offset, as soon as getBountingClientRect takes on screen coords
-            right: rootWidth - rect.right - 15
-        }
-
-        console.log(_coords);
-
-        setCoords(_coords);
-    };
-
-
+    const oncloseFilterPanel = () => {
+        console.log("Closing filter panel");
+    }
 
     return (<>
         <div className="container">
@@ -40,19 +22,9 @@ function Layout(props: IProps) {
                     <div className="wh-title">Sample Widget</div>
                     <div className="wh-toolbar">
 
-                        <div className="burger-menu" 
-                            onClick={(e) => {
-                                updateTooltipCoords(e.target as HTMLButtonElement);
-                                setShowModal(true);
-                            }}
-                        >
-                        </div>
-                        {
-                            showModal ?
-                                <FilterPanel coords={coords} rootElement={rootElement} onClose={() => setShowModal(false)} />
-                                :
-                                ""
-                        }
+                        <FilterPanel onOpen={onOpenFilterPanel} onClose={oncloseFilterPanel} >
+                            <div>Some content</div>
+                        </FilterPanel>
 
                     </div>
                 </div>

@@ -1,3 +1,19 @@
+.filter-panel-btn {
+    position: relative;
+
+    &.fpb-burger-menu {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        background-color: #ecebeb;
+        background-image: url("/assets/images/burger-menu.png");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 50%;
+        cursor: pointer;
+    }
+}
+
 .filter-panel {
     position: absolute;
     background-color: white;
@@ -8,7 +24,6 @@
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.12);
-
 
     * {
         box-sizing: border-box;
@@ -31,7 +46,7 @@
             background-repeat: no-repeat;
             background-size: 50%;
             cursor: pointer;
-            animation: animate 1s linear;
+            animation: animate 0.2s linear;
             animation-fill-mode: forwards;
         }
     }
@@ -47,28 +62,6 @@
 
     .filter-body {
         width: 100%;
-        padding: 8px 10px;
-
-        .fb-row {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: auto;
-            align-items: center;
-            justify-content: center;
-            margin: 6px auto;
-
-            .fb-label {
-                width: 100%;
-                padding: 10px 0;
-            }
-
-            .fb-filter {
-                width: 100%;
-                padding: 8px;
-                border-radius: 8px;
-                outline: none;
-            }
-        }
+        padding: 15px 10px;
     }
 }
