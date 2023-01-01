@@ -13,21 +13,21 @@
   "devDependencies": {
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.6",
-    "source-map-loader": "^0.2.4",
-    "svg-url-loader": "^4.0.0",
-    "ts-loader": "^6.2.1",
+    "source-map-loader": "^4.0.1",
+    "svg-url-loader": "^8.0.0",
+    "ts-loader": "^9.4.2",
     "typescript": "^3.8.3",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11"
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
   },
   "dependencies": {
     "@types/lodash": "^4.14.152",
-    "css-loader": "^3.4.2",
+    "css-loader": "^6.7.3",
     "lodash": "^4.17.15",
     "node-sass": "^4.14.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "sass-loader": "^8.0.2",
+    "sass-loader": "^13.2.0",
     "style-loader": "^1.1.3"
   }
 }
